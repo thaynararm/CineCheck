@@ -1,9 +1,9 @@
 {% extends "template.html" %}
 {% block content %}
 
-<form action="{{ url_for('create') }}" method="post" enctype="multipart/form-data">
+<form action="{{ url_for('update') }}" method="post" enctype="multipart/form-data">
     <figure class="img thumbnail col-md-4">
-        <img class="img-fluid" src="{{ url_for('image', name_file='capa_padrao.jpg') }}">
+        <img class="img-fluid" src="{{ url_for('image', name_file=cover) }}">
         <figcaption>
             <label class="fileContainer">
                 Mudar Capa
@@ -11,19 +11,19 @@
             </label>
         </figcaption>
     </figure>
-
     <fieldset>
+      <input type="hidden" name="id" value="{{ movie_or_serie.id }}">
         <div class="form-group">
             <label for="name">Nome</label>
-            <input type="text" id="name" name="name" class="form-control">
+            <input type="text" id="name" name="name" class="form-control" value="{{ movie_or_serie.name }}">
         </div>
         <div class="form-group">
             <label for="duration">Duração</label>
-            <input type="text" id="duration" name="duration" class="form-control">
+            <input type="text" id="duration" name="duration" class="form-control" value="{{ movie_or_serie.duration }}">
         </div>
         <div class="form-group">
             <label for="local">Local</label>
-            <input type="text" id="local" name="local" class="form-control">
+            <input type="text" id="local" name="local" class="form-control" value="{{ movie_or_serie.local }}">
         </div>
         <button type="submit" class="btn btn-primary btn-salvar">Salvar</button>
     </fieldset>

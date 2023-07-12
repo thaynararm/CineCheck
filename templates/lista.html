@@ -7,6 +7,7 @@
             <th>Nome</th>
             <th>Duração</th>
             <th>Onde Assistir</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -15,6 +16,10 @@
             <td>{{ movie_or_series.name }}</td>
             <td>{{ movie_or_series.duration }}</td>
             <td>{{ movie_or_series.local }}</td>
+            <td>
+                <a href="{{ url_for('edit', id=movie_or_series.id) }}">Editar</a>
+                <a href="{{ url_for('delete', id=movie_or_series.id) }}">Deletar</a>
+            </td>
         </tr>
     {% endfor %}
     </tbody>
