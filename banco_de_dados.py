@@ -41,7 +41,7 @@ TABLES['Users'] = ('''
       CREATE TABLE `users` (
       `name` varchar(20) NOT NULL,
       `nickname` varchar(8) NOT NULL,
-      `password` varchar(100) NOT NULL,
+      `password` varchar(25) NOT NULL,
       PRIMARY KEY (`nickname`)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;''')
 

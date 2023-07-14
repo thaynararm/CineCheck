@@ -6,10 +6,19 @@
         <h1>Faça seu login</h1>
         <form method="POST" action="/authenticate">
             <input type="hidden" name="next" value="{{ next }}">
-            <p><label>Nome de usuário:</label> <input class="form-control" type="text" name="user" required></p>
-            <p><label>Senha:</label> <input class="form-control" type="password" name="password" required></p>
-            <p><button class="btn btn-primary" type="submit">Entrar</button></p>
-            <a class="btn btn-primary" href="{{ url_for('index') }}">Voltar</a>
+            {{ form.csrf_token() }}
+            <p>
+                {{ form.nickname.label(class="form-label") }}
+                {{ form.nickname(class="form-control") }}
+            </p>
+            <p>
+                {{ form.password.label(class="form-label") }}
+                {{ form.password(class="form-control") }}
+            </p>
+            <p>
+                {{ form.save(class="btn btn-primary") }}
+                <a class="btn btn-primary" href="{{ url_for('index') }}">Voltar</a>
+            </p>
         </form>
     </div>
 </body>

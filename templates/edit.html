@@ -12,20 +12,24 @@
         </figcaption>
     </figure>
     <fieldset>
-      <input type="hidden" name="id" value="{{ movie_or_serie.id }}">
+        {{ form.csrf_token() }}
+        <input type="hidden" name="id" value="{{ movie_or_serie.id }}">
         <div class="form-group">
-            <label for="name">Nome</label>
-            <input type="text" id="name" name="name" class="form-control" value="{{ movie_or_serie.name }}">
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-control") }}
         </div>
         <div class="form-group">
-            <label for="duration">Duração</label>
-            <input type="text" id="duration" name="duration" class="form-control" value="{{ movie_or_serie.duration }}">
+            {{ form.duration.label(class="form-label") }}
+            {{ form.duration(class="form-control") }}
         </div>
         <div class="form-group">
-            <label for="local">Local</label>
-            <input type="text" id="local" name="local" class="form-control" value="{{ movie_or_serie.local }}">
+            {{ form.local.label(class="form-label") }}
+            {{ form.local(class="form-control") }}
         </div>
-        <button type="submit" class="btn btn-primary btn-salvar">Salvar</button>
+        <div>
+            {{ form.save(class="btn btn-primary") }}
+            <a class="btn btn-primary" href="{{ url_for('index') }}">Voltar</a>
+        </div>
     </fieldset>
 </form>
 

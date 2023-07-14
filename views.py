@@ -1,7 +1,7 @@
 from cinechek import db, app
 from flask import render_template, request, redirect, session, flash, url_for, send_from_directory
 from models import Users, MoviesAndSeries
-from helpers import recover_image, delete_file
+from helpers import recover_image, delete_file, UserForm, GameForm
 import time
 
 
@@ -13,18 +13,23 @@ def index():
 
 @app.route('/new')
 def new():
+    form = GameForm()
     if 'logged_in_user' not in session or session['logged_in_user'] is None:
         return redirect(url_for('login', next=url_for('new')))
     else:
-        return render_template('new.html', title="Novos Filmes e Séries")
+        return render_template('new.html', title="Novos Filmes e Séries", form=form)
 
 
 @app.route('/create', methods=['POST', ])
 def create():
+    form = GameForm(request.form)
 
-    name = request.form['name']
-    duration = request.form['duration']
-    local = request.form['local']
+    if not form.validate_on_submit():
+        return redirect(url_for('new'))
+
+    name = form.name.data
+    duration = form.duration.data
+    local = form.local.data
 
     movie_or_serie = MoviesAndSeries.query.filter_by(name=name).first()
 
@@ -37,9 +42,10 @@ def create():
     db.session.commit()
 
     file = request.files['file']
-    upload_path = app.config['UPLOAD_PATH']
-    timestamp = time.time()
-    file.save(f'{upload_path}/cover{new_movie_or_serie.id}-{timestamp}.jpg')
+    if file:
+        upload_path = app.config['UPLOAD_PATH']
+        timestamp = time.time()
+        file.save(f'{upload_path}/cover{new_movie_or_serie.id}-{timestamp}.jpg')
 
     return redirect(url_for('index'))
 
@@ -49,16 +55,25 @@ def edit(id):
     if 'logged_in_user' not in session or session['logged_in_user'] is None:
         return redirect(url_for('login', next=url_for('edit', id=id)))
     movie_or_serie = MoviesAndSeries.query.filter_by(id=id).first()
+    form = GameForm()
+    form.name.data = movie_or_serie.name
+    form.duration.data = movie_or_serie.duration
+    form.local.data = movie_or_serie.local
     cover = recover_image(id)
-    return render_template('edit.html', title="Editando Filmes e Séries", movie_or_serie=movie_or_serie, cover=cover)
+    return render_template('edit.html', title="Editando Filmes e Séries", movie_or_serie=movie_or_serie, cover=cover, form=form)
 
 
 @app.route('/update', methods=['POST', ])
 def update():
+    form = GameForm(request.form)
+
+    if not form.validate_on_submit():
+        return redirect(url_for('new'))
+
     movie_or_serie = MoviesAndSeries.query.filter_by(id=request.form['id']).first()
-    movie_or_serie.name = request.form['name']
-    movie_or_serie.duration = request.form['duration']
-    movie_or_serie.local = request.form['local']
+    movie_or_serie.name = form.name.data
+    movie_or_serie.duration = form.duration.data
+    movie_or_serie.local = form.local.data
 
     db.session.add(movie_or_serie)
     db.session.commit()
@@ -85,11 +100,12 @@ def delete(id):
 
 @app.route('/login')
 def login():
+    form = UserForm()
     if request.args.get('next') is None:
-        return render_template('login.html', title='Filmes e Séries', next=url_for('other'))
+        return render_template('login.html', title='Filmes e Séries', next=url_for('other'), form=form)
     else:
         next = request.args.get('next')
-        return render_template('login.html', title='Filmes e Séries', next=next)
+        return render_template('login.html', title='Filmes e Séries', next=next, form=form)
 
 
 @app.route('/other')
@@ -102,11 +118,16 @@ def other():
 
 @app.route('/authenticate', methods=['POST', ])
 def authenticate():
-    user = Users.query.filter_by(nickname=request.form['user']).first()
+    form = UserForm(request.form)
+
+    if not form.validate_on_submit():
+        return redirect(url_for('login'))
+
+    user = Users.query.filter_by(nickname=form.nickname.data).first()
     next_page = request.form['next']
 
     if user:
-        if request.form['password'] == user.password:
+        if form.password.data == user.password:
             session['logged_in_user'] = user.nickname
             flash(user.nickname + ' logado com sucesso!')
             return redirect(next_page)

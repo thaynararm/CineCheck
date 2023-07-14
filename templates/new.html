@@ -7,26 +7,29 @@
         <figcaption>
             <label class="fileContainer">
                 Mudar Capa
-                <input type="file" name="file" accept=".jpg">
+                <input type="file" name="file" accept=".jpg" optional>
             </label>
         </figcaption>
     </figure>
 
     <fieldset>
+        {{ form.csrf_token() }}
         <div class="form-group">
-            <label for="name">Nome</label>
-            <input type="text" id="name" name="name" class="form-control">
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-control") }}
         </div>
         <div class="form-group">
-            <label for="duration">Duração</label>
-            <input type="text" id="duration" name="duration" class="form-control">
+            {{ form.duration.label(class="form-label") }}
+            {{ form.duration(class="form-control") }}
         </div>
         <div class="form-group">
-            <label for="local">Local</label>
-            <input type="text" id="local" name="local" class="form-control">
+            {{ form.local.label(class="form-label") }}
+            {{ form.local(class="form-control") }}
         </div>
-        <button type="submit" class="btn btn-primary btn-salvar">Salvar</button>
-        <a class="btn btn-primary" href="{{ url_for('index') }}">Voltar</a>
+        <div class="form-group">
+            {{ form.save(class="btn btn-primary") }}
+            <a class="btn btn-primary" href="{{ url_for('index') }}">Voltar</a>
+        </div>
     </fieldset>
 </form>
 
