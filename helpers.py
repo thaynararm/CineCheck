@@ -1,7 +1,7 @@
 import os
 from cinechek import app
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, validators
+from wtforms import StringField, SubmitField, PasswordField
 from wtforms.validators import DataRequired, Length
 
 
@@ -11,10 +11,12 @@ class GameForm(FlaskForm):
     local = StringField('Onde assistir o Filme ou Série', validators=[DataRequired(), Length(min=1, max=20)])
     save = SubmitField('Salvar')
 
+
 class UserForm(FlaskForm):
     nickname = StringField('Nome de Usuário', validators=[DataRequired(), Length(min=1, max=8)])
     password = PasswordField('Senha', validators=[DataRequired(), Length(min=1, max=25)])
     save = SubmitField('Login')
+
 
 def recover_image(id):
     for name_file in os.listdir(app.config['UPLOAD_PATH']):

@@ -1,7 +1,7 @@
 from cinechek import db, app
 from flask import render_template, request, redirect, session, flash, url_for, send_from_directory
-from models import Users, MoviesAndSeries
-from helpers import recover_image, delete_file, UserForm, GameForm
+from models import MoviesAndSeries
+from helpers import recover_image, delete_file, GameForm
 import time
 
 
@@ -60,7 +60,8 @@ def edit(id):
     form.duration.data = movie_or_serie.duration
     form.local.data = movie_or_serie.local
     cover = recover_image(id)
-    return render_template('edit.html', title="Editando Filmes e Séries", movie_or_serie=movie_or_serie, cover=cover, form=form)
+    return render_template(
+        'edit.html', title="Editando Filmes e Séries", movie_or_serie=movie_or_serie, cover=cover, form=form)
 
 
 @app.route('/update', methods=['POST', ])
@@ -96,54 +97,6 @@ def delete(id):
         db.session.commit()
         flash('Filme/Série deletado com sucesso!')
         return redirect(url_for('index'))
-
-
-@app.route('/login')
-def login():
-    form = UserForm()
-    if request.args.get('next') is None:
-        return render_template('login.html', title='Filmes e Séries', next=url_for('other'), form=form)
-    else:
-        next = request.args.get('next')
-        return render_template('login.html', title='Filmes e Séries', next=next, form=form)
-
-
-@app.route('/other')
-def other():
-    if 'logged_in_user' not in session or session['logged_in_user'] is None:
-        return redirect(url_for('login'))
-    else:
-        return redirect(url_for('index'))
-
-
-@app.route('/authenticate', methods=['POST', ])
-def authenticate():
-    form = UserForm(request.form)
-
-    if not form.validate_on_submit():
-        return redirect(url_for('login'))
-
-    user = Users.query.filter_by(nickname=form.nickname.data).first()
-    next_page = request.form['next']
-
-    if user:
-        if form.password.data == user.password:
-            session['logged_in_user'] = user.nickname
-            flash(user.nickname + ' logado com sucesso!')
-            return redirect(next_page)
-        else:
-            flash('Usuário e/ou senha inválidos!')
-            return redirect(next_page)
-    else:
-        flash('Usuário e/ou senha inválidos!')
-        return redirect(next_page)
-
-
-@app.route('/logout')
-def logout():
-    session['logged_in_user'] = None
-    flash('Logout efetuado com sucesso!')
-    return redirect(url_for('index'))
 
 
 @app.route('/uploads/<name_file>')
